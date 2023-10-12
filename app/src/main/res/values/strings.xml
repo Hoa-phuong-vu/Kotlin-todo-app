@@ -10,4 +10,6 @@
     <string name="next">next</string>
     <string name="registered">Already registered?</string>
     <string name="notregistered">Not Registered?</string>
+    <string name="typeinput">Enter Todo</string>
+    <string name="complete">Complete</string>
 </resources>

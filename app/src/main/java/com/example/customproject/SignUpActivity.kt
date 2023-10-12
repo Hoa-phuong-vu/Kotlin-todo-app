@@ -4,7 +4,9 @@ import android.content.Intent
 import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
@@ -27,6 +29,7 @@ class SignUpActivity : AppCompatActivity() {
         val passText = findViewById<TextInputEditText>(R.id.passwordHint)
         val retypeText = findViewById<TextInputEditText>(R.id.retypeHint)
         val login = findViewById<TextView>(R.id.LogInClick)
+        val progressbar = findViewById<ProgressBar>(R.id.progressBar)
 
         login.setOnClickListener{
             startActivity(Intent(this, LogInActivity::class.java))
@@ -39,6 +42,7 @@ class SignUpActivity : AppCompatActivity() {
 
             if ( email.isNotEmpty() && pass.isNotEmpty() && verifyPass.isNotEmpty()) {
                 if (pass == verifyPass) {
+                    progressbar.visibility = View.VISIBLE
                     auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(
                        OnCompleteListener {
                             if(it.isSuccessful){
@@ -47,9 +51,15 @@ class SignUpActivity : AppCompatActivity() {
                             } else {
                                 Toast.makeText(this, it.exception?.message, Toast.LENGTH_SHORT).show()
                             }
+                           progressbar.visibility = View.GONE
                         }
                     )
                 }
+                else {
+                    Toast.makeText(this, "passwords don't match", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Empty field not allowed", Toast.LENGTH_SHORT).show()
             }
 
         }

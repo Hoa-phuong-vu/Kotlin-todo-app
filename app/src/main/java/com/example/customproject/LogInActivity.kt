@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.WindowCompat
@@ -32,6 +34,7 @@ class LogInActivity : AppCompatActivity() {
         val emailText = findViewById<TextInputEditText>(R.id.emailHint)
         val passText = findViewById<TextInputEditText>(R.id.passwordHint)
         val signup = findViewById<TextView>(R.id.SignUpClick)
+        val progressbar = findViewById<ProgressBar>(R.id.progressBar2)
 
         signup.setOnClickListener{
             startActivity(Intent(this, SignUpActivity::class.java))
@@ -42,7 +45,7 @@ class LogInActivity : AppCompatActivity() {
             val pass = passText.text.toString().trim()
 
             if ( email.isNotEmpty() && pass.isNotEmpty()) {
-
+                    progressbar.visibility = View.VISIBLE
                     auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(
                         OnCompleteListener {
                             if(it.isSuccessful){
@@ -51,8 +54,11 @@ class LogInActivity : AppCompatActivity() {
                             } else {
                                 Toast.makeText(this, it.exception?.message, Toast.LENGTH_SHORT).show()
                             }
+                            progressbar.visibility = View.GONE
                         }
                     )
+            } else {
+                Toast.makeText(this, "Empty field not allowed", Toast.LENGTH_SHORT).show()
             }
         }
 

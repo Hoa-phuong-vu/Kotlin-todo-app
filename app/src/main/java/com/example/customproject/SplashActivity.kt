@@ -8,11 +8,14 @@ import android.os.Looper
 import android.view.WindowInsets
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.auth.FirebaseAuth
 
 class SplashActivity : AppCompatActivity() {
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        auth = FirebaseAuth.getInstance()
 
         //Hide the system bars -> enter full screen
         val windowInsetsController =
@@ -21,8 +24,11 @@ class SplashActivity : AppCompatActivity() {
 
         //Automatically goes onto log in page
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, LogInActivity::class.java))
-            finish()
+//            if(auth.currentUser != null) {
+//                startActivity(Intent(this, MainActivity::class.java))
+//            } else {
+                startActivity(Intent(this, LogInActivity::class.java))
+//            }
         }, 2000)
 
 
