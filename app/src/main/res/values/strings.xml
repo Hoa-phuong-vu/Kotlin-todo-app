@@ -2,4 +2,5 @@
     <string name="app_name">CustomProject</string>
     <string name="background">background</string>
     <string name="todo">Todo</string>
+    <string name="login">Log In</string>
 </resources>
