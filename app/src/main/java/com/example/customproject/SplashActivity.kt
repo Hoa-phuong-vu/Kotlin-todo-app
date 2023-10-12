@@ -1,7 +1,10 @@
 package com.example.customproject
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.WindowInsets
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -15,6 +18,12 @@ class SplashActivity : AppCompatActivity() {
         val windowInsetsController =
             WindowCompat.getInsetsController(window, window.decorView)
         windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+
+        //Automatically goes onto log in page
+        Handler(Looper.getMainLooper()).postDelayed({
+            startActivity(Intent(this, LogInActivity::class.java))
+            finish()
+        }, 2000)
 
 
     }

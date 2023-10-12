@@ -2,5 +2,7 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/dela_gothic_one</item>
+        <item>@font/noto_serif</item>
+        <item>@font/noto_serif_bold</item>
     </array>
 </resources>

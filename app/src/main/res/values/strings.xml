@@ -3,4 +3,11 @@
     <string name="background">background</string>
     <string name="todo">Todo</string>
     <string name="login">Log In</string>
+    <string name="enterYourEmail">Enter your Email</string>
+    <string name="enterYourPassword">Enter your Password</string>
+    <string name="retype">Retype your Password</string>
+    <string name="signup">Sign Up</string>
+    <string name="next">next</string>
+    <string name="registered">Already registered?</string>
+    <string name="notregistered">Not Registered?</string>
 </resources>
