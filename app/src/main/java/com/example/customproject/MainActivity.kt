@@ -1,16 +1,22 @@
 package com.example.customproject
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.Adapter
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.customproject.databinding.ActivityMainBinding
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -25,15 +31,43 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
     private lateinit var newRecyclerView: RecyclerView
     private lateinit var adapter: TodoAdapter
     private lateinit var newList: MutableList<Todos>
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var toggle: ActionBarDrawerToggle
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Initialize the binding
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
         auth = FirebaseAuth.getInstance()
         databaseRef = FirebaseDatabase.getInstance().reference
             .child("Tasks").child(auth.currentUser?.uid.toString())
+
+        // Set up the navigation drawer
+        toggle = ActionBarDrawerToggle(this, binding.drawerLayout, R.string.open, R.string.close)
+        binding.drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        val navIcon = binding.navIcon
+        navIcon.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        // Set up the navigation menu
+        binding.menu.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.logout -> {
+                    startActivity(Intent(this@MainActivity, LogInActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
 
 //         Initialize the RecyclerView
         newRecyclerView = findViewById(R.id.recyclerView)
@@ -48,9 +82,15 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
 
         getDataFromFirebase()
         registerEvents()
-
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(toggle.onOptionsItemSelected(item)){
+           return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+    //write the tasks & add them
     private fun registerEvents(){
         val expand = findViewById<ImageView>(R.id.add)
         val addTodoLayout = findViewById<LinearLayout>(R.id.addTodoLayout)
@@ -86,6 +126,7 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
         }
     }
 
+    //get the tasks from database
     private fun getDataFromFirebase(){
         databaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -110,6 +151,7 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
         })
     }
 
+    //delete tasks
     override fun onDeleteItemClicked(todos: Todos, position: Int) {
         databaseRef.child(todos.taskId).removeValue().addOnCompleteListener {
             if (it.isSuccessful) {
@@ -120,21 +162,11 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
         }
     }
 
+
+    //edit tasks
     override fun onEditItemClicked(todos: Todos, position: Int) {
 
     }
 
-    private fun updateTask(todos: Todos, todoEdit: TextInputEditText) {
-        val map = HashMap<String, Any>()
-        map[todos.taskId] = todos.task
-        databaseRef.updateChildren(map).addOnCompleteListener {
-            if (it.isSuccessful) {
-                Toast.makeText(this, "Updated Successfully", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
-            }
-
-        }
-    }
 
 }

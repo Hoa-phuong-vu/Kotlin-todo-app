@@ -12,4 +12,8 @@
     <string name="notregistered">Not Registered?</string>
     <string name="typeinput">Enter Todo</string>
     <string name="complete">Complete</string>
+    <string name="edit_task">Edit tasks</string>
+    <string name="logout">Log Out</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>

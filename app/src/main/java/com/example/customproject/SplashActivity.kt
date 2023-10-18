@@ -24,11 +24,11 @@ class SplashActivity : AppCompatActivity() {
 
         //Automatically goes onto log in page
         Handler(Looper.getMainLooper()).postDelayed({
-//            if(auth.currentUser != null) {
-//                startActivity(Intent(this, MainActivity::class.java))
-//            } else {
+            if(auth.currentUser != null) {
+                startActivity(Intent(this, MainActivity::class.java))
+            } else {
                 startActivity(Intent(this, LogInActivity::class.java))
-//            }
+            }
         }, 2000)
 
 
