@@ -45,10 +45,11 @@ RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
                 todoTask.text = this.task
 
                 Log.d(TAG, "onBindViewHolder: $this")
+                // Set click listener for the edit button
                 editTask.setOnClickListener {
                     listener?.onEditItemClicked(this , position)
                 }
-
+                // Set click listener for the delete button
                 deleteTask.setOnClickListener {
                     listener?.onDeleteItemClicked(this , position)
                 }

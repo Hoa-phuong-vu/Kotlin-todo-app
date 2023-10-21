@@ -8,10 +8,12 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Adapter
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -109,20 +111,21 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
         val tasktext = findViewById<TextInputEditText>(R.id.todoText)
 
         addbtn.setOnClickListener{
-            val todoTask = tasktext.text.toString()
-            if(todoTask.isNotEmpty()){
-                databaseRef.push().setValue(todoTask).addOnCompleteListener{
-                    if(it.isSuccessful){
-                        Toast.makeText(this, "Todo saved successfully", Toast.LENGTH_SHORT).show()
-                        tasktext.text = null
-                    } else {
-                        Toast.makeText(this, it.exception?.message, Toast.LENGTH_SHORT).show()
+                val todoTask = tasktext.text.toString()
+                if (todoTask.isNotEmpty()) {
+                    databaseRef.push().setValue(todoTask).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            Toast.makeText(this, "Todo saved successfully", Toast.LENGTH_SHORT)
+                                .show()
+                            tasktext.text = null
+                        } else {
+                            Toast.makeText(this, it.exception?.message, Toast.LENGTH_SHORT).show()
+                        }
+                        addTodoLayout.visibility = View.GONE
                     }
-                    addTodoLayout.visibility = View.GONE
+                } else {
+                    Toast.makeText(this, "Please type some todos", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(this, "Please type some todos", Toast.LENGTH_SHORT).show()
-            }
         }
     }
 
@@ -165,7 +168,17 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
 
     //edit tasks
     override fun onEditItemClicked(todos: Todos, position: Int) {
-
+        val editDialog =  AlertDialog.Builder(this)
+        val editText = TextInputEditText(this)
+        editText.setText(todos.task)
+        editDialog.setView(editText)
+        editDialog.setPositiveButton("Save") { _, _ ->
+            val editedText = editText.text.toString()
+            // Update the Firebase database with the edited text
+            databaseRef.child(todos.taskId).setValue(editedText)
+        }
+        editDialog.setNegativeButton("Cancel") { _, _ -> }
+        editDialog.show()
     }
 
 
