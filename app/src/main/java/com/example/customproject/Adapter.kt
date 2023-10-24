@@ -49,7 +49,15 @@ RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
             with(list[position]) {
                 todoTask.text = this.task
 
-
+                if (this.isChecked) {
+                    completeButton.setImageResource(R.drawable.check)
+                    todoTask.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                    dueTime.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                } else {
+                    completeButton.setImageResource(R.drawable.uncheck)
+                    todoTask.paintFlags = 0
+                    dueTime.paintFlags = 0
+                }
                 Log.d(TAG, "onBindViewHolder: $this")
                 // Set click listener for the edit button
                 editTask.setOnClickListener {

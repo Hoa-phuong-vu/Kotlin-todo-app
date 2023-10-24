@@ -69,10 +69,9 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView1"
-            android:layout_width="365dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp"
             app:cardUseCompatPadding="true">
@@ -99,21 +98,29 @@
 
             <Button
                 android:id="@+id/time"
-                android:layout_width="wrap_content"
+                android:layout_width="193dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
+                android:layout_marginStart="1dp"
                 android:text="@string/select_time" />
+            <Button
+                android:id="@+id/AddBtn"
+                android:layout_width="193dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="195dp"
+                android:layout_marginTop="50dp"
+                android:text="@string/save" />
 
 
         </com.google.android.material.card.MaterialCardView>
 
-        <ImageView
-            android:id="@+id/AddBtn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="-10dp"
-            android:layout_marginTop="50dp"
-            android:src="@drawable/btn" />
+<!--        <ImageView-->
+<!--            android:id="@+id/AddBtn"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_marginLeft="-10dp"-->
+<!--            android:layout_marginTop="50dp"-->
+<!--            android:src="@drawable/btn" />-->
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

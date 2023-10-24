@@ -31,9 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:fontFamily="@font/noto_serif_bold"
-            android:padding="10dp"
             android:text="Item 1"
-            android:textSize="25sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/checkButton"
             app:layout_constraintStart_toEndOf="@+id/checkButton"
             app:layout_constraintTop_toTopOf="parent" />
@@ -44,7 +43,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:fontFamily="@font/noto_serif_bold"
-            android:padding="10dp"
             android:text="Due Time"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="@+id/todoTask"

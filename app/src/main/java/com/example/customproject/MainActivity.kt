@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Adapter
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -38,7 +39,6 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
     private lateinit var newList: MutableList<Todos>
     private lateinit var binding: ActivityMainBinding
     private lateinit var toggle: ActionBarDrawerToggle
-    private var isChecked = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,8 +95,7 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
     private fun registerEvents(){
         val expand = findViewById<ImageView>(R.id.add)
         val addTodoLayout = findViewById<LinearLayout>(R.id.addTodoLayout)
-        val uncheck = findViewById<ImageView>(R.id.checkButton)
-        val addbtn = findViewById<ImageView>(R.id.AddBtn)
+        val addbtn = findViewById<Button>(R.id.AddBtn)
         val tasktext = findViewById<TextInputEditText>(R.id.todoText)
 
 
@@ -192,22 +191,9 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
     }
 
     override fun onUncheckClicked(todos: Todos, position: Int) {
-        val completeButton= findViewById<ImageView>(R.id.checkButton)
-        val todoTask: TextView = findViewById(R.id.todoTask)
-        val dueTime: TextView = findViewById(R.id.dueTime)
-
         todos.isChecked = !todos.isChecked
+        adapter.notifyItemChanged(position)
 
-        // Update the UI based on the new checked state
-        if (todos.isChecked) {
-            completeButton.setImageResource(R.drawable.check)
-            todoTask.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-            dueTime.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-        } else {
-            completeButton.setImageResource(R.drawable.uncheck)
-            todoTask.paintFlags = 0
-            dueTime.paintFlags = 0
-        }
     }
 
 }
