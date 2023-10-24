@@ -61,7 +61,7 @@
         android:id="@+id/addTodoLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -76,25 +76,6 @@
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp"
             app:cardUseCompatPadding="true">
-            <!--            <com.google.android.material.textfield.TextInputLayout-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="50dp"-->
-            <!--                android:background="@color/white"-->
-            <!--                app:boxStrokeWidth="0dp"-->
-            <!--                app:boxStrokeWidthFocused="0dp"-->
-            <!--                app:hintEnabled="false">-->
-
-            <!--                <com.google.android.material.textfield.TextInputEditText-->
-            <!--                    android:id="@+id/todoEditText"-->
-            <!--                    android:layout_width="match_parent"-->
-            <!--                    android:layout_height="50dp"-->
-            <!--                    android:background="@color/white"-->
-            <!--                    android:hint="Edit your task"-->
-            <!--                    android:inputType="text"-->
-            <!--                    android:paddingStart="12dp"-->
-            <!--                    android:paddingTop="15dp"-->
-            <!--                    android:visibility="gone"/>-->
-            <!--            </com.google.android.material.textfield.TextInputLayout>-->
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -116,6 +97,13 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <Button
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:text="@string/select_time" />
+
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -124,14 +112,14 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="-10dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="50dp"
             android:src="@drawable/btn" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="480dp"
+        android:layout_height="450dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

@@ -2,6 +2,7 @@ package com.example.customproject
 
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.graphics.Paint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,8 +10,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Adapter
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -35,6 +38,7 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
     private lateinit var newList: MutableList<Todos>
     private lateinit var binding: ActivityMainBinding
     private lateinit var toggle: ActionBarDrawerToggle
+    private var isChecked = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,18 +88,18 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
 
         getDataFromFirebase()
         registerEvents()
+
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(toggle.onOptionsItemSelected(item)){
-           return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
     //write the tasks & add them
     private fun registerEvents(){
         val expand = findViewById<ImageView>(R.id.add)
         val addTodoLayout = findViewById<LinearLayout>(R.id.addTodoLayout)
+        val uncheck = findViewById<ImageView>(R.id.checkButton)
+        val addbtn = findViewById<ImageView>(R.id.AddBtn)
+        val tasktext = findViewById<TextInputEditText>(R.id.todoText)
+
+
 
         expand.setOnClickListener{
             // Toggle the visibility of the addTodoLayout
@@ -107,9 +111,7 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
 
         }
 
-        val addbtn = findViewById<ImageView>(R.id.AddBtn)
-        val tasktext = findViewById<TextInputEditText>(R.id.todoText)
-
+        //add todos
         addbtn.setOnClickListener{
                 val todoTask = tasktext.text.toString()
                 if (todoTask.isNotEmpty()) {
@@ -181,5 +183,31 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
         editDialog.show()
     }
 
+    //toggles the nav drawer
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(toggle.onOptionsItemSelected(item)){
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onUncheckClicked(todos: Todos, position: Int) {
+        val completeButton= findViewById<ImageView>(R.id.checkButton)
+        val todoTask: TextView = findViewById(R.id.todoTask)
+        val dueTime: TextView = findViewById(R.id.dueTime)
+
+        todos.isChecked = !todos.isChecked
+
+        // Update the UI based on the new checked state
+        if (todos.isChecked) {
+            completeButton.setImageResource(R.drawable.check)
+            todoTask.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            dueTime.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+        } else {
+            completeButton.setImageResource(R.drawable.uncheck)
+            todoTask.paintFlags = 0
+            dueTime.paintFlags = 0
+        }
+    }
 
 }

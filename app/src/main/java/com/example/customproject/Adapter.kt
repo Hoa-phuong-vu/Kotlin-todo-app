@@ -1,14 +1,17 @@
 package com.example.customproject
 
+import android.graphics.Paint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Adapter
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import org.w3c.dom.Text
 
 class TodoAdapter (private val list:MutableList<Todos>) :
 RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
@@ -25,6 +28,8 @@ RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
         val todoTask: TextView = itemView.findViewById(R.id.todoTask)
         val editTask: ImageView = itemView.findViewById(R.id.editTask)
         val deleteTask: ImageView = itemView.findViewById(R.id.deleteTask)
+        val completeButton: ImageView = itemView.findViewById(R.id.checkButton)
+        val dueTime: TextView = itemView.findViewById(R.id.dueTime)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
@@ -44,6 +49,7 @@ RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
             with(list[position]) {
                 todoTask.text = this.task
 
+
                 Log.d(TAG, "onBindViewHolder: $this")
                 // Set click listener for the edit button
                 editTask.setOnClickListener {
@@ -53,6 +59,9 @@ RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
                 deleteTask.setOnClickListener {
                     listener?.onDeleteItemClicked(this , position)
                 }
+                completeButton.setOnClickListener {
+                    listener?.onUncheckClicked(this, position)
+                }
             }
         }
 
@@ -61,6 +70,7 @@ RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
     interface TaskAdapterInterface{
         fun onDeleteItemClicked(todos: Todos, position : Int)
         fun onEditItemClicked(todos: Todos, position: Int)
+        fun onUncheckClicked(todos: Todos, position: Int)
     }
 
 }
