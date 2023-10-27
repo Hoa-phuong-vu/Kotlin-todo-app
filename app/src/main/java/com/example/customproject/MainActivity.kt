@@ -1,8 +1,10 @@
 package com.example.customproject
 
+import android.app.TimePickerDialog
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Paint
+import android.icu.util.Calendar
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -97,6 +99,8 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
         val addTodoLayout = findViewById<LinearLayout>(R.id.addTodoLayout)
         val addbtn = findViewById<Button>(R.id.AddBtn)
         val tasktext = findViewById<TextInputEditText>(R.id.todoText)
+        val timeBtn = findViewById<Button>(R.id.time)
+        val dueTimeTextView = findViewById<TextView>(R.id.dueTime)
 
 
 
@@ -110,15 +114,40 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
 
         }
 
+        timeBtn.setOnClickListener {
+            val currentTime = java.util.Calendar.getInstance() // Use java.util.Calendar
+            val hour = currentTime.get(java.util.Calendar.HOUR_OF_DAY)
+            val minute = currentTime.get(java.util.Calendar.MINUTE)
+
+            val timePickerDialog = TimePickerDialog(
+                this,
+                { _, selectedHour, selectedMinute ->
+                    val selectedTime =  String.format("%02d:%02d", selectedHour, selectedMinute)
+                    timeBtn.text = selectedTime
+                },
+                hour,
+                minute,
+                true
+            )
+            timePickerDialog.show()
+        }
+
+
         //add todos
         addbtn.setOnClickListener{
                 val todoTask = tasktext.text.toString()
+                val selectedTime = timeBtn.text.toString()
                 if (todoTask.isNotEmpty()) {
-                    databaseRef.push().setValue(todoTask).addOnCompleteListener {
+                    val taskData = HashMap<String, String>()
+                    taskData["task"] = todoTask
+                    taskData["dueTime"] = selectedTime
+                    databaseRef.push().setValue(taskData).addOnCompleteListener{
                         if (it.isSuccessful) {
                             Toast.makeText(this, "Todo saved successfully", Toast.LENGTH_SHORT)
                                 .show()
                             tasktext.text = null
+                            timeBtn.text = "Due Time"
+                            dueTimeTextView.text = "Due Time: $selectedTime"
                         } else {
                             Toast.makeText(this, it.exception?.message, Toast.LENGTH_SHORT).show()
                         }
@@ -131,29 +160,31 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
     }
 
     //get the tasks from database
-    private fun getDataFromFirebase(){
+    private fun getDataFromFirebase() {
         databaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-
                 newList.clear()
                 for (taskSnapshot in snapshot.children) {
-                    val todoTask =
-                        taskSnapshot.key?.let { Todos(it, taskSnapshot.value.toString()) }
+                    val taskId = taskSnapshot.key
+                    val task = taskSnapshot.child("task").getValue(String::class.java)
+                    val dueTime = taskSnapshot.child("dueTime").getValue(String::class.java)
 
-                    if (todoTask != null) {
+                    if (taskId != null && task != null && dueTime != null) {
+                        val todoTask = Todos(taskId, task, dueTime)
                         newList.add(todoTask)
+                        Log.d("FirebaseData", "Task ID: $taskId, Task: $task, Due Time: $dueTime")
                     }
-
                 }
                 adapter.notifyDataSetChanged()
-
             }
-
             override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseError", "Firebase database error: ${error.message}")
                 Toast.makeText(applicationContext, error.message, Toast.LENGTH_SHORT).show()
             }
         })
     }
+
+
 
     //delete tasks
     override fun onDeleteItemClicked(todos: Todos, position: Int) {
@@ -166,17 +197,22 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
         }
     }
 
-
     //edit tasks
     override fun onEditItemClicked(todos: Todos, position: Int) {
-        val editDialog =  AlertDialog.Builder(this)
+        val editDialog =  AlertDialog.Builder(this)  // pop up edit dialog
         val editText = TextInputEditText(this)
+        val editTime = TextInputEditText(this)
         editText.setText(todos.task)
+        editTime.setText(todos.dueTime)
         editDialog.setView(editText)
+        editDialog.setView(editTime)
         editDialog.setPositiveButton("Save") { _, _ ->
             val editedText = editText.text.toString()
-            // Update the Firebase database with the edited text
-            databaseRef.child(todos.taskId).setValue(editedText)
+            val editedTime = editTime.text.toString()
+            val taskData = HashMap<String, String>()
+            taskData["task"] = editedText
+            taskData["dueTime"] = editedTime
+            databaseRef.child(todos.taskId).setValue(taskData)
         }
         editDialog.setNegativeButton("Cancel") { _, _ -> }
         editDialog.show()
