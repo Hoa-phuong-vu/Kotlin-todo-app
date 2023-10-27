@@ -81,6 +81,7 @@ RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
         fun onDeleteItemClicked(todos: Todos, position : Int)
         fun onEditItemClicked(todos: Todos, position: Int)
         fun onUncheckClicked(todos: Todos, position: Int)
+
     }
 
 }

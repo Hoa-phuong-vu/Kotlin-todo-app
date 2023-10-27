@@ -4,8 +4,8 @@ import java.time.LocalTime
 
 data class Todos(
     val taskId: String,
-    val task: String,
-    val dueTime: String,
+    var task: String,
+    var dueTime: String,
     var isChecked: Boolean = false
 )
 

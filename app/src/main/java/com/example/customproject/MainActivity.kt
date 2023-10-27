@@ -89,30 +89,35 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
         newRecyclerView.adapter = adapter
 
         getDataFromFirebase()
-        registerEvents()
+//        registerEvents()
+        val expand = findViewById<ImageView>(R.id.add)
+
+        expand.setOnClickListener{
+            val fragment = PopUpFragment()
+            fragment.show(supportFragmentManager, "newTask")
+
+        }
+
 
     }
+    fun addNewTask(newTask: Todos) {
+        // Add the new task to your data source
+        newList.add(newTask)
+
+        // Notify the RecyclerView adapter that the data has changed
+        adapter.notifyItemInserted(newList.size - 1)
+    }
+
 
     //write the tasks & add them
     private fun registerEvents(){
-        val expand = findViewById<ImageView>(R.id.add)
+
         val addTodoLayout = findViewById<LinearLayout>(R.id.addTodoLayout)
         val addbtn = findViewById<Button>(R.id.AddBtn)
         val tasktext = findViewById<TextInputEditText>(R.id.todoText)
         val timeBtn = findViewById<Button>(R.id.time)
         val dueTimeTextView = findViewById<TextView>(R.id.dueTime)
 
-
-
-        expand.setOnClickListener{
-            // Toggle the visibility of the addTodoLayout
-            if (addTodoLayout.visibility == View.VISIBLE) {
-                addTodoLayout.visibility = View.GONE // Hide the layout
-            } else {
-                addTodoLayout.visibility = View.VISIBLE // Show the layout
-            }
-
-        }
 
         timeBtn.setOnClickListener {
             val currentTime = java.util.Calendar.getInstance() // Use java.util.Calendar
@@ -199,24 +204,33 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
 
     //edit tasks
     override fun onEditItemClicked(todos: Todos, position: Int) {
-        val editDialog =  AlertDialog.Builder(this)  // pop up edit dialog
-        val editText = TextInputEditText(this)
-        val editTime = TextInputEditText(this)
-        editText.setText(todos.task)
-        editTime.setText(todos.dueTime)
-        editDialog.setView(editText)
-        editDialog.setView(editTime)
-        editDialog.setPositiveButton("Save") { _, _ ->
-            val editedText = editText.text.toString()
-            val editedTime = editTime.text.toString()
-            val taskData = HashMap<String, String>()
-            taskData["task"] = editedText
-            taskData["dueTime"] = editedTime
-            databaseRef.child(todos.taskId).setValue(taskData)
-        }
-        editDialog.setNegativeButton("Cancel") { _, _ -> }
-        editDialog.show()
+        val taskReference = databaseRef.child(todos.taskId)
+        taskReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val taskData = snapshot.value as Map<*, *>
+                    val task = taskData["task"] as String
+                    val dueTime = taskData["dueTime"] as String
+
+                    // Update the existing 'todos' object with fetched data
+                    todos.task = task
+                    todos.dueTime = dueTime
+
+                    val fragment = PopUpFragment()
+                    fragment.show(supportFragmentManager, "editTask")
+                    fragment.initDatabaseRef(databaseRef)// Show the fragment
+                    fragment.editTask(todos) // Set the task data for editing
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle any errors, e.g., task not found
+                Toast.makeText(applicationContext, "Failed to fetch task details: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
+
+
 
     //toggles the nav drawer
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
