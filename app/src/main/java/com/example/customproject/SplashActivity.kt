@@ -22,13 +22,13 @@ class SplashActivity : AppCompatActivity() {
             WindowCompat.getInsetsController(window, window.decorView)
         windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
 
-        //Automatically goes onto log in page
+        //Automatically goes onto log in page if you uncomment the lines below
         Handler(Looper.getMainLooper()).postDelayed({
-            if(auth.currentUser != null) {
-                startActivity(Intent(this, MainActivity::class.java))
-            } else {
+//            if(auth.currentUser != null) {
+//                startActivity(Intent(this, MainActivity::class.java))
+//            } else {
                 startActivity(Intent(this, LogInActivity::class.java))
-            }
+//            }
         }, 2000)
 
 

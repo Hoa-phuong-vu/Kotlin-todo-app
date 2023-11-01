@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
                     true
                 }
                 R.id.favPage -> {
-                    // Filter out favorite tasks here
+                    // Filter out favorite tasks
                     val expand = findViewById<ImageView>(R.id.add)
                     expand.visibility = View.GONE
                         val favoriteTasks = newList.filter { it.isFavorite }
@@ -85,6 +85,7 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
                     true
                 }
                 R.id.home -> {
+                    //return to the originial list
                     val expand = findViewById<ImageView>(R.id.add)
                     expand.visibility = View.VISIBLE
                     getDataFromFirebase()
@@ -122,7 +123,6 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
         newRecyclerView.adapter = adapter
 
         getDataFromFirebase()
-//        registerEvents()
         val expand = findViewById<ImageView>(R.id.add)
 
         expand.setOnClickListener{
@@ -132,69 +132,6 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
         }
 
 
-    }
-    fun addNewTask(newTask: Todos) {
-        // Add the new task to your data source
-        newList.add(newTask)
-
-        // Notify the RecyclerView adapter that the data has changed
-        adapter.notifyItemInserted(newList.size - 1)
-    }
-
-
-    //write the tasks & add them
-    private fun registerEvents(){
-
-        val addTodoLayout = findViewById<LinearLayout>(R.id.addTodoLayout)
-        val addbtn = findViewById<Button>(R.id.AddBtn)
-        val tasktext = findViewById<TextInputEditText>(R.id.todoText)
-        val timeBtn = findViewById<Button>(R.id.time)
-        val dueTimeTextView = findViewById<TextView>(R.id.dueTime)
-
-
-        timeBtn.setOnClickListener {
-            val currentTime = java.util.Calendar.getInstance() // Use java.util.Calendar
-            val hour = currentTime.get(java.util.Calendar.HOUR_OF_DAY)
-            val minute = currentTime.get(java.util.Calendar.MINUTE)
-
-            val timePickerDialog = TimePickerDialog(
-                this,
-                { _, selectedHour, selectedMinute ->
-                    val selectedTime =  String.format("%02d:%02d", selectedHour, selectedMinute)
-                    timeBtn.text = selectedTime
-                },
-                hour,
-                minute,
-                true
-            )
-            timePickerDialog.show()
-        }
-
-
-        //add todos
-        addbtn.setOnClickListener{
-                val todoTask = tasktext.text.toString()
-                val selectedTime = timeBtn.text.toString()
-                if (todoTask.isNotEmpty()) {
-                    val taskData = HashMap<String, String>()
-                    taskData["task"] = todoTask
-                    taskData["dueTime"] = selectedTime
-                    databaseRef.push().setValue(taskData).addOnCompleteListener{
-                        if (it.isSuccessful) {
-                            Toast.makeText(this, "Todo saved successfully", Toast.LENGTH_SHORT)
-                                .show()
-                            tasktext.text = null
-                            timeBtn.text = "Due Time"
-                            dueTimeTextView.text = "Due Time: $selectedTime"
-                        } else {
-                            Toast.makeText(this, it.exception?.message, Toast.LENGTH_SHORT).show()
-                        }
-                        addTodoLayout.visibility = View.GONE
-                    }
-                } else {
-                    Toast.makeText(this, "Please type some todos", Toast.LENGTH_SHORT).show()
-                }
-        }
     }
 
     //get the tasks from database

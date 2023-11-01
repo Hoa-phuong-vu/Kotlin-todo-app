@@ -54,6 +54,7 @@ RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
                     favouriteTask.setImageResource(R.drawable.starborder)
                 }
 
+                //toggle checkbox outline
                 if (this.isChecked) {
                     completeButton.setImageResource(R.drawable.check)
                     completeButton.setColorFilter(Color.MAGENTA)
@@ -77,7 +78,7 @@ RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
                 editTask.setOnClickListener {
                     listener?.onEditItemClicked(this , position)
                 }
-//
+                // Checkbox
                 completeButton.setOnClickListener {
                     listener?.onUncheckClicked(this, position)
                 }
