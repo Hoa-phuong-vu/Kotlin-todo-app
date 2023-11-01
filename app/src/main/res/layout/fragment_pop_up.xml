@@ -14,7 +14,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="70dp"
                 android:background="@color/white"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp"
@@ -22,8 +22,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/todoText"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_width="400dp"
+                    android:layout_height="70dp"
                     android:background="@color/white"
                     android:hint="@string/typeinput"
                     android:inputType="text"
@@ -34,17 +34,17 @@
 
             <Button
                 android:id="@+id/time"
-                android:layout_width="205dp"
+                android:layout_width="188dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="80dp"
                 android:layout_marginStart="1dp"
                 android:text="@string/select_time" />
             <Button
                 android:id="@+id/AddBtn"
-                android:layout_width="205dp"
+                android:layout_width="189dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="205dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginStart="189dp"
+                android:layout_marginTop="80dp"
                 android:text="@string/save" />
 
 

@@ -8,12 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
 class TodoAdapter (private val list:MutableList<Todos>) :
 RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
     private  val TAG = "TaskAdapter"
     private var listener:TaskAdapterInterface? = null
+
     fun setListener(listener: TaskAdapterInterface) {
         this.listener = listener
     }
@@ -22,7 +24,7 @@ RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
     class TodoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val todoTask: TextView = itemView.findViewById(R.id.todoTask)
         val editTask: ImageView = itemView.findViewById(R.id.editTask)
-        val deleteTask: ImageView = itemView.findViewById(R.id.deleteTask)
+        val favouriteTask: ImageView = itemView.findViewById(R.id.favourite)
         val completeButton: ImageView = itemView.findViewById(R.id.checkButton)
         val dueTimeTextView: TextView = itemView.findViewById(R.id.dueTime)
     }
@@ -45,7 +47,12 @@ RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
                 todoTask.text = this.task
                 dueTimeTextView.text = this.dueTime
 
-
+                // Change the favorite icon based on the isFavorite property
+                if (this.isFavorite) {
+                    favouriteTask.setImageResource(R.drawable.star)
+                } else {
+                    favouriteTask.setImageResource(R.drawable.starborder)
+                }
 
                 if (this.isChecked) {
                     completeButton.setImageResource(R.drawable.check)
@@ -59,29 +66,36 @@ RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
                     todoTask.paintFlags = 0
                     dueTimeTextView.paintFlags = 0
                 }
+
+
                 Log.d(TAG, "onBindViewHolder: $this")
+                //favourite icon
+                favouriteTask.setOnClickListener {
+                    listener?.onFavoriteClicked(this, position)
+                }
                 // Set click listener for the edit button
                 editTask.setOnClickListener {
                     listener?.onEditItemClicked(this , position)
                 }
-                // Set click listener for the delete button
-                deleteTask.setOnClickListener {
-                    listener?.onDeleteItemClicked(this , position)
-                }
+//
                 completeButton.setOnClickListener {
                     listener?.onUncheckClicked(this, position)
                 }
             }
         }
-
-
     }
 
+
     interface TaskAdapterInterface{
-        fun onDeleteItemClicked(todos: Todos, position : Int)
+        fun onDeleteItem(todos: Todos, position : Int)
         fun onEditItemClicked(todos: Todos, position: Int)
+        fun onFavoriteClicked(todos: Todos, position: Int)
         fun onUncheckClicked(todos: Todos, position: Int)
 
     }
+
+
+
+
 
 }

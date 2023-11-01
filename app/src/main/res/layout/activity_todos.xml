@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="8dp"
-    app:cardUseCompatPadding="true"
+    android:layout_margin="4dp"
+    app:cardMaxElevation="@dimen/cardview_compat_inset_shadow"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -29,6 +27,7 @@
             android:id="@+id/todoTask"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="240dp"
             android:layout_marginStart="20dp"
             android:fontFamily="@font/noto_serif_bold"
             android:text="Item 1"
@@ -55,15 +54,15 @@
         android:src="@drawable/edit"
         android:layout_marginEnd="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/deleteTask"
+        app:layout_constraintEnd_toStartOf="@id/favourite"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
-        android:id="@+id/deleteTask"
+        android:id="@+id/favourite"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/delete"
+        android:src="@drawable/starborder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>

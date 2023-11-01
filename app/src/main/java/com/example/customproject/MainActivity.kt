@@ -22,6 +22,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customproject.databinding.ActivityMainBinding
@@ -73,6 +74,22 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
                     startActivity(Intent(this@MainActivity, LogInActivity::class.java))
                     true
                 }
+                R.id.favPage -> {
+                    // Filter out favorite tasks here
+                    val expand = findViewById<ImageView>(R.id.add)
+                    expand.visibility = View.GONE
+                        val favoriteTasks = newList.filter { it.isFavorite }
+                        newList.clear()
+                        newList.addAll(favoriteTasks)
+                        adapter.notifyDataSetChanged()
+                    true
+                }
+                R.id.home -> {
+                    val expand = findViewById<ImageView>(R.id.add)
+                    expand.visibility = View.VISIBLE
+                    getDataFromFirebase()
+                    true
+                }
                 else -> false
             }
         }
@@ -85,6 +102,22 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
 //        set adapter to the RecyclerView
         newList = mutableListOf()
         adapter = TodoAdapter(newList)
+
+        val swipeToDelete = object :SwipeToDelete(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                when(direction) {
+                    ItemTouchHelper.LEFT -> {
+                        val position = viewHolder.bindingAdapterPosition
+                        val deletedItem = newList[position]
+
+                        onDeleteItem(deletedItem, position)
+                    }
+                }
+            }
+        }
+        val touchHelper = ItemTouchHelper(swipeToDelete)
+        touchHelper.attachToRecyclerView(newRecyclerView)
+
         adapter.setListener(this)
         newRecyclerView.adapter = adapter
 
@@ -173,9 +206,12 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
                     val taskId = taskSnapshot.key
                     val task = taskSnapshot.child("task").getValue(String::class.java)
                     val dueTime = taskSnapshot.child("dueTime").getValue(String::class.java)
+                    val isChecked = taskSnapshot.child("isChecked").getValue(Boolean::class.java) ?: false
+                    val isFavorite = taskSnapshot.child("isFavorite").getValue(Boolean::class.java) ?: false
+
 
                     if (taskId != null && task != null && dueTime != null) {
-                        val todoTask = Todos(taskId, task, dueTime)
+                        val todoTask = Todos(taskId, task, dueTime,isChecked, isFavorite)
                         newList.add(todoTask)
                         Log.d("FirebaseData", "Task ID: $taskId, Task: $task, Due Time: $dueTime")
                     }
@@ -192,7 +228,7 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
 
 
     //delete tasks
-    override fun onDeleteItemClicked(todos: Todos, position: Int) {
+    override fun onDeleteItem(todos: Todos, position: Int) {
         databaseRef.child(todos.taskId).removeValue().addOnCompleteListener {
             if (it.isSuccessful) {
                 Toast.makeText(this, "Deleted Successfully", Toast.LENGTH_SHORT).show()
@@ -243,7 +279,50 @@ class MainActivity : AppCompatActivity(), TodoAdapter.TaskAdapterInterface {
     override fun onUncheckClicked(todos: Todos, position: Int) {
         todos.isChecked = !todos.isChecked
         adapter.notifyItemChanged(position)
+        updateStatusInDatabase(todos, "isChecked", todos.isChecked)
 
     }
 
+    override fun onFavoriteClicked(todos: Todos, position: Int) {
+        todos.isFavorite = !todos.isFavorite
+        // Update the RecyclerView to reflect the changes
+        adapter.notifyItemChanged(position)
+        // Update the database with the new favorite status
+        updateStatusInDatabase(todos, "isFavorite", todos.isFavorite)
+    }
+
+    private fun updateStatusInDatabase(todos: Todos, key: String, value: Any) {
+        val taskReference = databaseRef.child(todos.taskId)
+        val updates = mapOf(key to value)
+
+        taskReference.updateChildren(updates)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    when (key) {
+                        "isFavorite" -> {
+                            if (todos.isFavorite) {
+                                Toast.makeText(this, "Marked as favorite", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "Removed from favorites", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        "isChecked" -> {
+                            if (todos.isChecked) {
+                                Toast.makeText(this, "Marked as checked", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "Marked as unchecked", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                } else {
+                    // Handle the case where the database update failed
+                    Toast.makeText(this, "Failed to update $key status", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+
+
 }
+
+
