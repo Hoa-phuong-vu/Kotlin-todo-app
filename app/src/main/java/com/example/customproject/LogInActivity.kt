@@ -26,41 +26,40 @@ class LogInActivity : AppCompatActivity() {
 
 
         auth = FirebaseAuth.getInstance()
-        registerEvents()
-    }
 
-    private fun registerEvents(){
+
         val nextbtn = findViewById<ImageView>(R.id.next);
         val emailText = findViewById<TextInputEditText>(R.id.emailHint)
         val passText = findViewById<TextInputEditText>(R.id.passwordHint)
         val signup = findViewById<TextView>(R.id.SignUpClick)
         val progressbar = findViewById<ProgressBar>(R.id.progressBar2)
 
-        signup.setOnClickListener{
+        signup.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
         }
 
-        nextbtn.setOnClickListener{
+        nextbtn.setOnClickListener {
             val email = emailText.text.toString().trim()
             val pass = passText.text.toString().trim()
 
-            if ( email.isNotEmpty() && pass.isNotEmpty()) {
-                    progressbar.visibility = View.VISIBLE
-                    auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(
-                        OnCompleteListener {
-                            if(it.isSuccessful){
-                                Toast.makeText(this, "Login Successfully", Toast.LENGTH_SHORT).show()
-                                startActivity(Intent(this, MainActivity::class.java))
-                            } else {
-                                Toast.makeText(this, it.exception?.message, Toast.LENGTH_SHORT).show()
-                            }
-                            progressbar.visibility = View.GONE
+            if (email.isNotEmpty() && pass.isNotEmpty()) {
+                progressbar.visibility = View.VISIBLE
+                auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(
+                    OnCompleteListener {
+                        if (it.isSuccessful) {
+                            Toast.makeText(this, "Login Successfully", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this, MainActivity::class.java))
+                        } else {
+                            Toast.makeText(this, it.exception?.message, Toast.LENGTH_SHORT).show()
                         }
-                    )
+                        progressbar.visibility = View.GONE
+                    }
+                )
             } else {
                 Toast.makeText(this, "Empty field not allowed", Toast.LENGTH_SHORT).show()
             }
         }
-
     }
+
+
 }

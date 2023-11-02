@@ -20,10 +20,7 @@ class SignUpActivity : AppCompatActivity() {
         setContentView(R.layout.activity_sign_up)
 
         auth = FirebaseAuth.getInstance()
-        registerEvents()
-    }
 
-    private fun registerEvents(){
         val nextbtn = findViewById<ImageView>(R.id.next);
         val emailText = findViewById<TextInputEditText>(R.id.emailHint)
         val passText = findViewById<TextInputEditText>(R.id.passwordHint)
